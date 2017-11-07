@@ -7,13 +7,6 @@ polygon both edge
 panel rect -2 -500 -500 2000 1000 1000 rect_top
 end_surface
 
-start_surface pump_layer
-action both all t
-color both grey 0.5
-polygon both edge
-panel rect -2 -500 -500 1999 1000 1000 rect_pump
-end_surface
-
 start_surface sides
 action both all r
 color both grey 0.8
@@ -64,12 +57,7 @@ compartment andnot nano
 end_compartment
 
 #--------------------------------------
-#---compartment-dependent diffusion setup--------------
-#---defined after molecule apecies and compartments-----
-#-----------------------------------------------------------------------------
-# compartment dependent diffusion; have to be defined after compartments setup
-difc ca 	220000  #181740
+difc ca 	220000  # 220000 nm^2/ms = 220 nm^2/us
 difc cam 	50000
 difc bK 	0
-difc Ng 	0
-difc pump	0
+

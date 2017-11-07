@@ -1,3 +1,4 @@
+# there are 200 KN0C0; bK@cam~cam@K represents CaMKII subunits that have CaM bound to it
 compartment_mol 2006 6 complete bK
 compartment_update 6920 complete bK@cam~cam@K
 compartment_update 5288 complete bK@cam~cam@K
