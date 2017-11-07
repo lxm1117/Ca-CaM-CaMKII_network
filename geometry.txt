@@ -1,0 +1,75 @@
+#------------------Surfaces------------
+start_surface membrane
+action both all r
+color both grey 0.8
+polygon both edge
+
+panel rect -2 -500 -500 2000 1000 1000 rect_top
+end_surface
+
+start_surface pump_layer
+action both all t
+color both grey 0.5
+polygon both edge
+panel rect -2 -500 -500 1999 1000 1000 rect_pump
+end_surface
+
+start_surface sides
+action both all r
+color both grey 0.8
+polygon both edge
+
+panel rect +0 -500 -500 0  1000 2000 rect_left
+panel rect -0  500 -500 0  1000 2000 rect_right
+panel rect +1 -500 -500 0  1000 2000 rect_front
+panel rect -1 -500  500 0  1000 2000 rect_back
+end_surface
+
+start_surface bottom
+unbounded_emitter front ca  1 0 0 1999.5
+#unbounded_emitter front cam 1 0 0 1999.5
+action both cam r
+action both bK r
+action both Ng r
+action both pump r
+color both grey 0.8
+panel rect +2 -500 -500 0 1000 1000 rect_bottom
+end_surface
+
+start_surface shell
+action both all t
+color both grey 0.8
+polygon both edge
+panel rect +2 -500 -500 1950 1000 1000 rect_shell
+end_surface
+
+#--------------------------------------
+start_compartment complete
+surface membrane
+surface sides
+point 1 1 1
+surface bottom
+end_compartment
+
+start_compartment nano
+surface membrane
+surface shell
+surface sides
+point 0 0 1998
+end_compartment
+
+start_compartment cytol
+compartment equal complete
+compartment andnot nano
+end_compartment
+
+#--------------------------------------
+#---compartment-dependent diffusion setup--------------
+#---defined after molecule apecies and compartments-----
+#-----------------------------------------------------------------------------
+# compartment dependent diffusion; have to be defined after compartments setup
+difc ca 	220000  #181740
+difc cam 	50000
+difc bK 	0
+difc Ng 	0
+difc pump	0

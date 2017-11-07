@@ -1,0 +1,297 @@
+# revised from reaction_v1.txt.0
+# KpN1_off, KpN2_off, KpC1_off, KpC2_off, autophosphorylation recalculated
+
+species ca
+species cam
+species Ng
+species bK
+species pump
+
+molecule_lists total
+mol_list * total
+
+
+sites	ca		@cam @pump
+sites	cam 	@N1 @N2 @C1 @C2 @K Kp @Ng
+sites 	Ng		@cam
+sites 	bK 		@cam n.cam n.P	P
+sites   pump 	@ca
+
+dif_sites	ca 		cam
+dif_sites	ca		pump
+dif_sites 	cam		Ng
+dif_sites 	cam		K
+
+#complex_radius 8
+#--------------------------------------------
+# derived from Keller et al. (2008)
+define pump-ca_on	850000  #500 uM^-1s^-1	
+define pumping		100000
+
+reaction pump-ca		pump{ca==0} + ca{pump==0,cam==0} -> pump[ca=1]~ca[pump=1]		pump-ca_on
+reaction pump-ca_out	pump{ca==1}~ca{pump==1,cam==0} -> pump[ca=0]					pumping
+
+#--------------------------------------------
+# use parameters from Pepke et al.2010
+define camN1_on 161500
+define camN2_on	161500
+define camC1_on	8548.5714
+define camC2_on	8548.5714
+
+define camN1_off 3.75	# 3.57
+define camN2_off 0.75
+define camC1_off 0.0528
+define camC2_off 0.00784
+
+reaction camN1-ca	cam{N2==0,N1==0,K==0,Kp==0,Ng==0} + ca{cam==0,pump==0} -> cam[N1=1]~ca[cam=1]	camN1_on
+reaction camN2-ca	cam{N1==1,N2==0,K==0,Kp==0,Ng==0} + ca{cam==0,pump==0} -> cam[N2=1]~ca[cam=1]	camN2_on
+reaction camC1-ca	cam{C2==0,C1==0,K==0,Kp==0,Ng==0} + ca{cam==0,pump==0} -> cam[C1=1]~ca[cam=1]	camC1_on
+reaction camC2-ca	cam{C1==1,C2==0,K==0,Kp==0,Ng==0} + ca{cam==0,pump==0} -> cam[C2=1]~ca[cam=1]	camC2_on
+
+reaction camN1-ca_r	cam{N1==1,N2==0,K==0,Kp==0,Ng==0}~ca{cam==1,pump==0}->cam[N1=0] + ca[cam=0]		camN1_off
+reaction camN2-ca_r	cam{N1==1,N2==1,K==0,Kp==0,Ng==0}~ca{cam==1,pump==0}->cam[N2=0] + ca[cam=0]		camN2_off
+reaction camC1-ca_r	cam{C1==1,C2==0,K==0,Kp==0,Ng==0}~ca{cam==1,pump==0}->cam[C1=0] + ca[cam=0] 	camC1_off
+reaction camC2-ca_r	cam{C1==1,C2==1,K==0,Kp==0,Ng==0}~ca{cam==1,pump==0}->cam[C2=0] + ca[cam=0]		camC2_off
+
+#--Ng, cam interactions---------------------------------
+# parameters from zeng and holmes 2010
+
+define Ng-camN0C0_on	17000
+define Ng-camN1C0_on 	17000
+define Ng-camN2C0_on 	17000
+define Ng-camN0C1_on	3400
+define Ng-camN1C1_on	3400
+define Ng-camN2C1_on	3400
+define Ng-camN0C2_on	170
+define Ng-camN1C2_on 	170
+define Ng-camN2C2_on	170
+
+define Ng-camN0C0_off	0.03
+define Ng-camN1C0_off 	0.03
+define Ng-camN2C0_off 	0.03
+define Ng-camN0C1_off	0.036
+define Ng-camN1C1_off	0.036
+define Ng-camN2C1_off	0.036
+define Ng-camN0C2_off	0.075
+define Ng-camN1C2_off 	0.075
+define Ng-camN2C2_off	0.075
+
+reaction Ng-camN0C0		Ng{cam==0} + cam{N1==0,N2==0,C1==0,C2==0,K==0,Ng==0,Kp==0} -> Ng[cam=1]~cam[Ng=1] 	Ng-camN0C0_on
+reaction Ng-camN1C0		Ng{cam==0} + cam{N1==1,N2==0,C1==0,C2==0,K==0,Ng==0,Kp==0} -> Ng[cam=1]~cam[Ng=1] 	Ng-camN1C0_on
+reaction Ng-camN2C0		Ng{cam==0} + cam{N1==1,N2==1,C1==0,C2==0,K==0,Ng==0,Kp==0} -> Ng[cam=1]~cam[Ng=1] 	Ng-camN2C0_on
+reaction Ng-camN0C1		Ng{cam==0} + cam{N1==0,N2==0,C1==1,C2==0,K==0,Ng==0,Kp==0} -> Ng[cam=1]~cam[Ng=1] 	Ng-camN0C1_on
+reaction Ng-camN1C1		Ng{cam==0} + cam{N1==1,N2==0,C1==1,C2==0,K==0,Ng==0,Kp==0} -> Ng[cam=1]~cam[Ng=1] 	Ng-camN1C1_on
+reaction Ng-camN2C1		Ng{cam==0} + cam{N1==1,N2==1,C1==1,C2==0,K==0,Ng==0,Kp==0} -> Ng[cam=1]~cam[Ng=1] 	Ng-camN2C1_on
+reaction Ng-camN0C2		Ng{cam==0} + cam{N1==0,N2==0,C1==1,C2==1,K==0,Ng==0,Kp==0} -> Ng[cam=1]~cam[Ng=1] 	Ng-camN0C2_on
+reaction Ng-camN1C2		Ng{cam==0} + cam{N1==1,N2==0,C1==1,C2==1,K==0,Ng==0,Kp==0} -> Ng[cam=1]~cam[Ng=1]	Ng-camN1C2_on
+reaction Ng-camN2C2		Ng{cam==0} + cam{N1==1,N2==1,C1==1,C2==1,K==0,Ng==0,Kp==0} -> Ng[cam=1]~cam[Ng=1] 	Ng-camN2C2_on
+
+reaction Ng-camN0C0_r	Ng{cam==1}~cam{N1==0,N2==0,C1==0,C2==0,K==0,Kp==0,Ng==1} -> Ng[cam=0] + cam[Ng=0] 	Ng-camN0C0_off
+reaction Ng-camN1C0_r	Ng{cam==1}~cam{N1==1,N2==0,C1==0,C2==0,K==0,Kp==0,Ng==1} -> Ng[cam=0] + cam[Ng=0] 	Ng-camN1C0_off
+reaction Ng-camN2C0_r	Ng{cam==1}~cam{N1==1,N2==1,C1==0,C2==0,K==0,Kp==0,Ng==1} -> Ng[cam=0] + cam[Ng=0] 	Ng-camN2C0_off
+reaction Ng-camN0C1_r	Ng{cam==1}~cam{N1==0,N2==0,C1==1,C2==0,K==0,Kp==0,Ng==1} -> Ng[cam=0] + cam[Ng=0] 	Ng-camN0C1_off
+reaction Ng-camN1C1_r	Ng{cam==1}~cam{N1==1,N2==0,C1==1,C2==0,K==0,Kp==0,Ng==1} -> Ng[cam=0] + cam[Ng=0] 	Ng-camN1C1_off
+reaction Ng-camN2C1_r	Ng{cam==1}~cam{N1==1,N2==1,C1==1,C2==0,K==0,Kp==0,Ng==1} -> Ng[cam=0] + cam[Ng=0] 	Ng-camN2C1_off
+reaction Ng-camN0C2_r	Ng{cam==1}~cam{N1==0,N2==0,C1==1,C2==1,K==0,Kp==0,Ng==1} -> Ng[cam=0] + cam[Ng=0] 	Ng-camN0C2_off
+reaction Ng-camN1C2_r	Ng{cam==1}~cam{N1==1,N2==0,C1==1,C2==1,K==0,Kp==0,Ng==1} -> Ng[cam=0] + cam[Ng=0]	Ng-camN1C2_off
+reaction Ng-camN2C2_r	Ng{cam==1}~cam{N1==1,N2==1,C1==1,C2==1,K==0,Kp==0,Ng==1} -> Ng[cam=0] + cam[Ng=0] 	Ng-camN2C2_off
+
+#--Ng-cam, ca interactions--------------------------------
+define NgcamN1_on	161500
+define NgcamN2_on	161500
+define NgcamC1_on	8548.5714
+define NgcamC2_on	8548.5714
+define NgcamN1_off	3.75			#3.57
+define NgcamN2_off	0.75
+define NgcamC1_off	0.3168
+define NgcamC2_off	0.326144
+
+reaction NgcamN1~ca		cam{Ng==1,N1==0,N2==0,K==0,Kp==0} + ca{cam==0,pump==0} -> cam[N1=1]~ca[cam=1]	NgcamN1_on
+reaction NgcamN2~ca		cam{Ng==1,N1==1,N2==0,K==0,Kp==0} + ca{cam==0,pump==0} -> cam[N2=1]~ca[cam=1]	NgcamN2_on
+reaction NgcamC1~ca		cam{Ng==1,C1==0,C2==0,K==0,Kp==0} + ca{cam==0,pump==0} -> cam[C1=1]~ca[cam=1]	NgcamC1_on	
+reaction NgcamC2~ca		cam{Ng==1,C1==1,C2==0,K==0,Kp==0} + ca{cam==0,pump==0} -> cam[C2=1]~ca[cam=1]	NgcamC2_on
+
+reaction NgcamN1~ca_r 	cam{Ng==1,N1==1,N2==0,K==0,Kp==0}~ca{cam==1,pump==0} -> cam[N1=0] + ca[cam=0]	NgcamN1_off	
+reaction NgcamN2~ca_r	cam{Ng==1,N1==1,N2==1,K==0,Kp==0}~ca{cam==1,pump==0} -> cam[N2=0] + ca[cam=0]	NgcamN2_off
+reaction NgcamC1~ca_r	cam{Ng==1,C1==1,C2==0,K==0,Kp==0}~ca{cam==1,pump==0} -> cam[C1=0] + ca[cam=0]	NgcamC1_off
+reaction NgcamC2~ca_r	cam{Ng==1,C1==1,C2==1,K==0,Kp==0}~ca{cam==1,pump==0} -> cam[C2=0] + ca[cam=0]	NgcamC2_off
+
+
+#--- cam binding with unphosphorylated bK and gK---------------------------------------------
+define K-camN0C0_on		32.3					#6.46
+define K-camN0C1_on		501.5					#100.3
+define K-camN0C2_on		7820  #9.2	 			#1564	
+define K-camN1C0_on		187						#37.4
+define K-camN1C1_on		2805					#561
+define K-camN1C2_on		44200  #52				#8840.0
+define K-camN2C0_on		1020					#204
+define K-camN2C1_on		16150  					#3230.0
+define K-camN2C2_on		131750 #155 uM^-1 s^-1	#26350.0
+
+define K-camN0C0_off	0.005586	
+define K-camN0C1_off	0.006195		
+define K-camN0C2_off	0.0069	
+define K-camN1C0_off	0.003234
+define K-camN1C1_off	0.003465
+define K-camN1C2_off	0.0039
+define K-camN2C0_off	0.001764
+define K-camN2C1_off	0.001995
+define K-camN2C2_off	0.0011625
+
+#----------------------------------------------------------------------------------------------------------------------------
+reaction bK-camN0C0		bK{cam==0,P==0} + cam{N1==0,N2==0,C1==0,C2==0,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1] 	K-camN0C0_on
+reaction bK-camN0C1		bK{cam==0,P==0} + cam{N1==0,N2==0,C1==1,C2==0,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1] 	K-camN0C1_on
+reaction bK-camN0C2		bK{cam==0,P==0} + cam{N1==0,N2==0,C1==1,C2==1,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1] 	K-camN0C2_on	
+
+reaction bK-camN1C0		bK{cam==0,P==0} + cam{N1==1,N2==0,C1==0,C2==0,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1] K-camN1C0_on
+reaction bK-camN1C1		bK{cam==0,P==0} + cam{N1==1,N2==0,C1==1,C2==0,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1] K-camN1C1_on
+reaction bK-camN1C2		bK{cam==0,P==0} + cam{N1==1,N2==0,C1==1,C2==1,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1] K-camN1C2_on	
+
+reaction bK-camN2C0		bK{cam==0,P==0} + cam{N1==1,N2==1,C1==0,C2==0,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1] K-camN2C0_on
+reaction bK-camN2C1		bK{cam==0,P==0} + cam{N1==1,N2==1,C1==1,C2==0,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1] K-camN2C1_on
+reaction bK-camN2C2		bK{cam==0,P==0} + cam{N1==1,N2==1,C1==1,C2==1,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1] K-camN2C2_on	
+
+reaction bK-camN0C0_r	bK{cam==1,P==0}~cam{N1==0,N2==0,C1==0,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=0] + cam[K=0] K-camN0C0_off 
+reaction bK-camN0C1_r	bK{cam==1,P==0}~cam{N1==0,N2==0,C1==1,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=0] + cam[K=0] K-camN0C1_off 
+reaction bK-camN0C2_r	bK{cam==1,P==0}~cam{N1==0,N2==0,C1==1,C2==1,K==1,Kp==0,Ng==0} -> bK[cam=0] + cam[K=0] K-camN0C2_off 
+
+reaction bK-camN1C0_r	bK{cam==1,P==0}~cam{N1==1,N2==0,C1==0,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=0] + cam[K=0] K-camN1C0_off 
+reaction bK-camN1C1_r	bK{cam==1,P==0}~cam{N1==1,N2==0,C1==1,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=0] + cam[K=0] K-camN1C1_off 
+reaction bK-camN1C2_r	bK{cam==1,P==0}~cam{N1==1,N2==0,C1==1,C2==1,K==1,Kp==0,Ng==0} -> bK[cam=0] + cam[K=0] K-camN1C2_off 
+
+reaction bK-camN2C0_r	bK{cam==1,P==0}~cam{N1==1,N2==1,C1==0,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=0] + cam[K=0] K-camN2C0_off 
+reaction bK-camN2C1_r	bK{cam==1,P==0}~cam{N1==1,N2==1,C1==1,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=0] + cam[K=0] K-camN2C1_off 
+reaction bK-camN2C2_r	bK{cam==1,P==0}~cam{N1==1,N2==1,C1==1,C2==1,K==1,Kp==0,Ng==0} -> bK[cam=0] + cam[K=0] K-camN2C2_off 
+
+
+#--- cam binding with phosphorylated bK and gK---------------------------------------------
+# actually, the same as K-camNxCx_on
+define Kp-camN0C0_on		32.3					#6.46
+define Kp-camN0C1_on		501.5					#100.3
+define Kp-camN0C2_on		7820  		 			#1564	
+define Kp-camN1C0_on		187						#37.4
+define Kp-camN1C1_on		2805					#561
+define Kp-camN1C2_on		44200  					#8840.0
+define Kp-camN2C0_on		1020					#204
+define Kp-camN2C1_on		16150  					#3230.0
+define Kp-camN2C2_on		131750 #155 uM^-1 s^-1	#26350.0
+
+define Kp-camN0C0_off	0.0001675800011	
+define Kp-camN0C1_off	0.00003717000012	
+define Kp-camN0C2_off	0.0000207
+define Kp-camN1C0_off	0.00001940400013
+define Kp-camN1C1_off	0.000004158000014
+define Kp-camN1C2_off	0.00000234
+define Kp-camN2C0_off	0.000005292000035
+define Kp-camN2C1_off	0.000001197000004
+define Kp-camN2C2_off	0.00000034875
+
+reaction bKp-camN0C0	bK{cam==0,P==1} + cam{N1==0,N2==0,C1==0,C2==0,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1,Kp=1] Kp-camN0C0_on
+reaction bKp-camN0C1	bK{cam==0,P==1} + cam{N1==0,N2==0,C1==1,C2==0,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1,Kp=1] Kp-camN0C1_on
+reaction bKp-camN0C2	bK{cam==0,P==1} + cam{N1==0,N2==0,C1==1,C2==1,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1,Kp=1] Kp-camN0C2_on	
+
+reaction bKp-camN1C0	bK{cam==0,P==1} + cam{N1==1,N2==0,C1==0,C2==0,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1,Kp=1] Kp-camN1C0_on
+reaction bKp-camN1C1	bK{cam==0,P==1} + cam{N1==1,N2==0,C1==1,C2==0,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1,Kp=1] Kp-camN1C1_on
+reaction bKp-camN1C2	bK{cam==0,P==1} + cam{N1==1,N2==0,C1==1,C2==1,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1,Kp=1] Kp-camN1C2_on	
+
+reaction bKp-camN2C0	bK{cam==0,P==1} + cam{N1==1,N2==1,C1==0,C2==0,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1,Kp=1] Kp-camN2C0_on
+reaction bKp-camN2C1	bK{cam==0,P==1} + cam{N1==1,N2==1,C1==1,C2==0,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1,Kp=1] Kp-camN2C1_on
+reaction bKp-camN2C2	bK{cam==0,P==1} + cam{N1==1,N2==1,C1==1,C2==1,K==0,Kp==0,Ng==0} -> bK[cam=1]~cam[K=1,Kp=1] Kp-camN2C2_on	
+
+reaction bKp-camN0C0_r	bK{cam==1,P==1}~cam{N1==0,N2==0,C1==0,C2==0,K==1,Kp==1,Ng==0} -> bK[cam=0] + cam[K=0,Kp=0] Kp-camN0C0_off 
+reaction bKp-camN0C1_r	bK{cam==1,P==1}~cam{N1==0,N2==0,C1==1,C2==0,K==1,Kp==1,Ng==0} -> bK[cam=0] + cam[K=0,Kp=0] Kp-camN0C1_off 
+reaction bKp-camN0C2_r	bK{cam==1,P==1}~cam{N1==0,N2==0,C1==1,C2==1,K==1,Kp==1,Ng==0} -> bK[cam=0] + cam[K=0,Kp=0] Kp-camN0C2_off 
+
+reaction bKp-camN1C0_r	bK{cam==1,P==1}~cam{N1==1,N2==0,C1==0,C2==0,K==1,Kp==1,Ng==0} -> bK[cam=0] + cam[K=0,Kp=0] Kp-camN1C0_off 
+reaction bKp-camN1C1_r	bK{cam==1,P==1}~cam{N1==1,N2==0,C1==1,C2==0,K==1,Kp==1,Ng==0} -> bK[cam=0] + cam[K=0,Kp=0] Kp-camN1C1_off 
+reaction bKp-camN1C2_r	bK{cam==1,P==1}~cam{N1==1,N2==0,C1==1,C2==1,K==1,Kp==1,Ng==0} -> bK[cam=0] + cam[K=0,Kp=0] Kp-camN1C2_off 
+
+reaction bKp-camN2C0_r	bK{cam==1,P==1}~cam{N1==1,N2==1,C1==0,C2==0,K==1,Kp==1,Ng==0} -> bK[cam=0] + cam[K=0,Kp=0] Kp-camN2C0_off 
+reaction bKp-camN2C1_r	bK{cam==1,P==1}~cam{N1==1,N2==1,C1==1,C2==0,K==1,Kp==1,Ng==0} -> bK[cam=0] + cam[K=0,Kp=0] Kp-camN2C1_off 
+reaction bKp-camN2C2_r	bK{cam==1,P==1}~cam{N1==1,N2==1,C1==1,C2==1,K==1,Kp==1,Ng==0} -> bK[cam=0] + cam[K=0,Kp=0] Kp-camN2C2_off 
+
+#----- bK autophosphorylation-------------------------------------------------------
+# scaled up by 10 times 
+#define Kp-camN0C0	0.0000
+define Kp-camN0C1 	0.0005		
+define Kp-camN0C2	0.001		
+define Kp-camN1C0	0.0005
+define Kp-camN1C1	0.0025
+define Kp-camN1C2	0.005
+define Kp-camN2C0	0.001
+define Kp-camN2C1	0.005
+define Kp-camN2C2	0.01
+
+# check with rxn->prob=1-exp(-rate*sim->dt), rxn->prob/(1-rxn->prob)
+reaction bKpcamN0C1	bK{n.cam==1,n.P==0,P==0,cam==1}~cam{N1==0,N2==0,C1==1,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1] Kp-camN0C1
+reaction bKpcamN0C2 bK{n.cam==1,n.P==0,P==0,cam==1}~cam{N1==0,N2==0,C1==1,C2==1,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1] Kp-camN0C2
+
+reaction bKpcamN1C0	bK{n.cam==1,n.P==0,P==0,cam==1}~cam{N1==1,N2==0,C1==0,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1] Kp-camN1C1
+reaction bKpcamN1C1	bK{n.cam==1,n.P==0,P==0,cam==1}~cam{N1==1,N2==0,C1==1,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1] Kp-camN1C1
+reaction bKpcamN1C2 bK{n.cam==1,n.P==0,P==0,cam==1}~cam{N1==1,N2==0,C1==1,C2==1,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1] Kp-camN1C2
+
+reaction bKpcamN2C0	bK{n.cam==1,n.P==0,P==0,cam==1}~cam{N1==1,N2==1,C1==0,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1] Kp-camN2C1
+reaction bKpcamN2C1	bK{n.cam==1,n.P==0,P==0,cam==1}~cam{N1==1,N2==1,C1==1,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1] Kp-camN2C1
+reaction bKpcamN2C2 bK{n.cam==1,n.P==0,P==0,cam==1}~cam{N1==1,N2==1,C1==1,C2==1,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1] Kp-camN2C2
+
+reaction bKpcamN0C1_p	bK{n.P==1,P==0,cam==1}~cam{N1==0,N2==0,C1==1,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1]	Kp-camN0C1
+reaction bKpcamN0C2_p	bK{n.P==1,P==0,cam==1}~cam{N1==0,N2==0,C1==1,C2==1,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1]	Kp-camN0C2
+
+reaction bKpcamN1C0_p	bK{n.P==1,P==0,cam==1}~cam{N1==1,N2==0,C1==0,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1]	Kp-camN1C1
+reaction bKpcamN1C1_p	bK{n.P==1,P==0,cam==1}~cam{N1==1,N2==0,C1==1,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1]	Kp-camN1C1
+reaction bKpcamN1C2_p	bK{n.P==1,P==0,cam==1}~cam{N1==1,N2==0,C1==1,C2==1,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1]	Kp-camN1C2
+
+reaction bKpcamN2C0_p	bK{n.P==1,P==0,cam==1}~cam{N1==1,N2==1,C1==0,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1]	Kp-camN2C1
+reaction bKpcamN2C1_p	bK{n.P==1,P==0,cam==1}~cam{N1==1,N2==1,C1==1,C2==0,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1]	Kp-camN2C1
+reaction bKpcamN2C2_p	bK{n.P==1,P==0,cam==1}~cam{N1==1,N2==1,C1==1,C2==1,K==1,Kp==0,Ng==0} -> bK[cam=1,P=1]~cam[K=1,Kp=1] Kp-camN2C2
+
+#--bK dephos-------------------------------------------
+define K-dephos	0.000003
+reaction bK-cam_dephos	bK{P==1,cam==1}~cam{K==1,Kp==1} -> bK[cam=1,P=0]~cam[K=1,Kp=0]			K-dephos
+reaction bK_dephos	bK{P==1,cam==0} -> bK[P=0]	K-dephos
+
+
+#--ca, naive (unphosphorylated) bK/gK/camKK/camKIV-caM binding unbinding-----------------------------------------------------
+define KcamN1_on 	129200
+define KcamN2_on	129200
+define KcamC1_on	74800
+define KcamC2_on	74800
+	
+define KcamN1_off	0.3
+define KcamN2_off	0.06
+define KcamC1_off	0.033
+define KcamC2_off	0.0049
+
+reaction KcamN1~ca		cam{K==1,Kp==0,Ng==0,N1==0,N2==0} + ca{cam==0,pump==0} -> cam[N1=1]~ca[cam=1] KcamN1_on		
+reaction KcamC1~ca		cam{K==1,Kp==0,Ng==0,C1==0,C2==0} + ca{cam==0,pump==0} -> cam[C1=1]~ca[cam=1] KcamC1_on
+reaction KcamN2~ca		cam{K==1,Kp==0,Ng==0,N1==1,N2==0} + ca{cam==0,pump==0} -> cam[N2=1]~ca[cam=1] KcamN2_on
+reaction KcamC2~ca		cam{K==1,Kp==0,Ng==0,C1==1,C2==0} + ca{cam==0,pump==0} -> cam[C2=1]~ca[cam=1] KcamC2_on
+
+reaction KcamN1~ca_r	cam{K==1,Kp==0,Ng==0,N1==1,N2==0}~ca{cam==1,pump==0} -> cam[N1=0] + ca[cam=0]	KcamN1_off
+reaction KcamC1~ca_r	cam{K==1,Kp==0,Ng==0,C1==1,C2==0}~ca{cam==1,pump==0} -> cam[C1=0] + ca[cam=0]	KcamC1_off
+reaction KcamN2~ca_r	cam{K==1,Kp==0,Ng==0,N1==1,N2==1}~ca{cam==1,pump==0} -> cam[N2=0] + ca[cam=0]	KcamN2_off
+reaction KcamC2~ca_r	cam{K==1,Kp==0,Ng==0,C1==1,C2==1}~ca{cam==1,pump==0} -> cam[C2=0] + ca[cam=0] 	KcamC2_off	
+
+
+#--ca, phosphorylated bK/gK  binding unbinding-----------------------------------------------------
+define KpcamN1_on 	129200	
+define KpcamN2_on	129200
+define KpcamC1_on	74800
+define KpcamC2_on	74800
+	
+define KpcamN1_off	0.06
+define KpcamN2_off	0.03
+define KpcamC1_off	0.0066
+define KpcamC2_off	0.00245 
+
+reaction KpcamN1~ca		cam{K==1,Kp==1,Ng==0,N1==0,N2==0} + ca{cam==0,pump==0} -> cam[N1=1]~ca[cam=1]	KpcamN1_on		
+reaction KpcamC1~ca		cam{K==1,Kp==1,Ng==0,C1==0,C2==0} + ca{cam==0,pump==0} -> cam[C1=1]~ca[cam=1]	KpcamC1_on
+reaction KpcamN2~ca		cam{K==1,Kp==1,Ng==0,N1==1,N2==0} + ca{cam==0,pump==0} -> cam[N2=1]~ca[cam=1] 	KpcamN2_on
+reaction KpcamC2~ca		cam{K==1,Kp==1,Ng==0,C1==1,C2==0} + ca{cam==0,pump==0} -> cam[C2=1]~ca[cam=1] 	KpcamC2_on
+
+reaction KpcamN1~ca_r	cam{K==1,Kp==1,Ng==0,N1==1,N2==0}~ca{cam==1,pump==0} -> cam[N1=0] + ca[cam=0]	KpcamN1_off
+reaction KpcamC1~ca_r	cam{K==1,Kp==1,Ng==0,C1==1,C2==0}~ca{cam==1,pump==0} -> cam[C1=0] + ca[cam=0]	KpcamC1_off
+reaction KpcamN2~ca_r	cam{K==1,Kp==1,Ng==0,N1==1,N2==1}~ca{cam==1,pump==0} -> cam[N2=0] + ca[cam=0]	KpcamN2_off
+reaction KpcamC2~ca_r	cam{K==1,Kp==1,Ng==0,C1==1,C2==1}~ca{cam==1,pump==0} -> cam[C2=0] + ca[cam=0] 	KpcamC2_off	
+
+reaction end

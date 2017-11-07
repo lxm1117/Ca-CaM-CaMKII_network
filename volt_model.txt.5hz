@@ -1,0 +1,80 @@
+/* exmpales followed:
+	/S7_surfaces/signal.txt
+	/S7_surfaces/unbounded_diffusion/emitter1.txt
+	/S99_more/neuron/neuron.txt
+
+units: nm ms
+M^(-1)s^(-1)=170 * 10^(-5) nm^3 ms^(-1)
+uM^(-1)s^(-1)=1700 nm^3 ms^(-1)
+*/
+
+define stimtime 2200
+
+define save_on
+#define graph_on
+#define gradient
+
+#-------------General parameters-------
+ifdefine graph_on
+	graphics opengl_good
+	graphic_iter 1
+	frame_thickness 0
+	frame_color 1 1 1
+	#grid_thickness 1
+else
+	graphics none
+endif
+
+dim 3
+accuracy 10
+
+molperbox 3
+#boxsize 1
+
+boundaries 0 -500 500
+boundaries 1 -500 500
+boundaries 2 0  2000  
+
+time_start 0
+time_stop  stimtime
+time_step  0.001 #1 usec, step  1.0/4.5/10, 4.5 is the largets off time step 
+
+ifdefine save_on
+	output_files molcount_cam_5hz.txt molcount_bK_5hz.txt
+	cmd n 100 molstatecountincmpt complete cam molcount_cam_5hz.txt
+	cmd n 100 molstatecountincmpt complete bK molcount_bK_5hz.txt
+	events reaction_events_5hz.txt
+endif
+
+#-------------Molecules----------------
+read_file reaction.txt
+
+#------------------Geometry------------
+read_file geometry.txt
+
+#------------molecules in compartment--
+read_file initial.txt
+
+#------------commands------------------
+# pointsource molec_name molec_num sunit pos0 pos1 pos2
+# cmd i 10 450 0.1 pointsource ca 5 1 0 0 4999   	// cmdpointsource() in smolcmd.c 
+# cmd i 10 20 0.1 voltage 5 1 0 0 
+# single ca channel 0.0936 /usec ~ 0.03 pA, Tardross (2013) used 0.02 or 0.005 pA
+# read_file ../../../Documents/cell_ca_sig/neuron_dat_files/ica_burst_cplx.txt
+
+read_file ../../../3cmpts/ca_influx/cainput_5hz16ch_init1/cainput_5hz16ch.txt_38
+multibinding on
+
+ifdefine graph_on
+	display_size all 2
+	#color caL  		  red
+	color cam	 	  blue
+
+	text_display ca
+	text_display cam
+
+	text_display time
+	cmd b pause
+endif
+
+end_file
